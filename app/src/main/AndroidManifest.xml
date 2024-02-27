@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="xmnh.soulfrog">
+    <application android:label="@string/app_name">
+        <!--模块标识-->
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true" />
+        <!--模块描述-->
+        <meta-data
+            android:name="xposeddescription"
+            android:value="by:xmnh" />
+        <!--模块最小支持xposed版本-->
+        <meta-data
+            android:name="xposedminversion"
+            android:value="82" />
+        <!--模块作用范围-->
+        <meta-data
+            android:name="xposedscope"
+            android:resource="@array/xposed_scope" />
+    </application>
+
+</manifest>

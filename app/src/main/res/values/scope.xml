@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--name里的值与AndroidManifest.xml的(xposedscope)模块作用范围相对应-->
+    <array name="xposed_scope">
+        <!--待填写需要hook的包名,每个包名对应一个item标签-->
+        <item>cn.kuwo.player</item>
+        <item>com.tencent.qqlive</item>
+<!--        <item>com.moyan.dailytask</item>-->
+        <item>com.lerist.fakelocation</item>
+        <item>com.shineyie.aijianji</item>
+        <item>com.sonelli.juicessh</item>
+        <item>flar2.devcheck</item>
+        <item>imoblife.brainwavestus</item>
+        <item>com.imoblife.now</item>
+        <item>com.estrongs.android.pop</item>
+        <item>eu.thedarken.sdm</item>
+        <item>eu.darken.sdmse</item>
+        <item>taluo.jumeng.com.tarot</item>
+        <item>com.lixiangdong.songcutter</item>
+        <item>com.duapps.recorder</item>
+        <item>cn.ticktick.task</item>
+        <item>com.qiyi.video</item>
+        <item>com.example.pptv</item>
+        <item>com.android.launcher3</item>
+        <item>com.zfast.xyz</item>
+        <item>world.letsgo.booster.android.pro</item>
+        <item>com.server.auditor.ssh.client</item>
+        <!--        <item>com.easysay.japanese</item>-->
+    </array>
+</resources>
