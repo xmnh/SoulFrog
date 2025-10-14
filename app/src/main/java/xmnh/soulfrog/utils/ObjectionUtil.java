@@ -7,6 +7,8 @@ import android.net.NetworkCapabilities;
 import android.os.Build;
 import android.os.Debug;
 import android.provider.Settings;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,6 +17,8 @@ import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
@@ -192,7 +196,7 @@ public class ObjectionUtil {
                                 param.setResult("");
                             }
 //                            if ("ro.secure".equals(result)
-////                                    || "ro.debuggable".equals(result)
+//                                    || "ro.debuggable".equals(result)
 //                            ) {
 //                                param.setResult("1");
 //                            }
@@ -213,6 +217,29 @@ public class ObjectionUtil {
             XposedBridge.log(e);
         }
     }
+
+    public static void ChangeRegion(ClassLoader classLoader) {
+        XposedHelpers.findAndHookMethod(TelephonyManager.class, "getNetworkCountryIso", new Object[]{new XC_MethodHook() { // from class: xmnh.soulfrog.utils.ObjectionUtil.9
+            public void afterHookedMethod(XC_MethodHook.MethodHookParam param) {
+                String result = param.getResult().toString();
+                Log.d("SoulFrog", "getNetworkCountryIso: " + result);
+                param.setResult("us");
+                Log.d("SoulFrog", "getNetworkCountryIso replace: " + param.getResult());
+            }
+        }});
+        XposedHelpers.findAndHookMethod(TelephonyManager.class, "getSimCountryIso", new Object[]{new XC_MethodHook() { // from class: xmnh.soulfrog.utils.ObjectionUtil.10
+            public void afterHookedMethod(XC_MethodHook.MethodHookParam param) {
+                String result = param.getResult().toString();
+                Log.d("SoulFrog", "getSimCountryIso: " + result);
+                param.setResult("us");
+                Log.d("SoulFrog", "getSimCountryIso replace: " + param.getResult());
+            }
+        }});
+        XposedHelpers.findAndHookMethod(TimeZone.class, "getDefaultRef", new Object[]{XC_MethodReplacement.returnConstant(TimeZone.getTimeZone("America/Los_Angeles"))});
+        XposedHelpers.findAndHookMethod(Locale.class, "getLanguage", new Object[]{XC_MethodReplacement.returnConstant("en")});
+        XposedHelpers.findAndHookMethod(Locale.class, "getCountry", new Object[]{XC_MethodReplacement.returnConstant("us")});
+    }
+
 
     private static void match(String str, XC_MethodHook.MethodHookParam param) {
         if (str != null) {

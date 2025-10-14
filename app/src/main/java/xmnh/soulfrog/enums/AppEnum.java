@@ -29,6 +29,11 @@ public enum AppEnum {
     INFINITY_AI("无界AI","com.blockmeta.trade"),
     LAUNCHER2("逍遥launcher2", "com.microvirt.launcher2"),
     YOUTUBE("YouTube", "com.google.android.youtube"),
+    TIKTOK("TikTok", "com.zhiliaoapp.musically"),
+
+    GUI_GU("鬼谷八荒", "com.guigugame.guigubahuang"),
+    TAP_TAP("TapTap", "com.taptap"),
+
     // TODO 待填写需要hook的枚举
     ;
 
@@ -47,4 +52,14 @@ public enum AppEnum {
     public String getPackageName() {
         return packageName;
     }
+
+    public static AppEnum getAppEnum(String packageName) {
+        for (AppEnum appEnum : values()) {
+            if (appEnum.getPackageName().equals(packageName)) {
+                return appEnum;
+            }
+        }
+        return null;
+    }
+
 }

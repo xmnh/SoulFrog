@@ -19,7 +19,7 @@ stringfog {
 
 android {
     namespace 'xmnh.soulfrog'
-    compileSdk 33
+    compileSdk 36
 
     buildFeatures {
         buildConfig = true
@@ -28,7 +28,7 @@ android {
     defaultConfig {
         applicationId "xmnh.soulfrog"
         minSdk 25
-        targetSdk 33
+        targetSdk 36
         versionCode 1
         versionName "1.0"
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -47,8 +47,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 

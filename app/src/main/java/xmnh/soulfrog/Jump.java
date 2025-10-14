@@ -2,6 +2,7 @@ package xmnh.soulfrog;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import java.util.function.BiConsumer;
 
@@ -13,6 +14,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import xmnh.soulfrog.context.XpContext;
 import xmnh.soulfrog.factory.AppFactory;
 import xmnh.soulfrog.interfaces.BaseHook;
+import xmnh.soulfrog.utils.HookUtil;
 import xmnh.soulfrog.utils.KillAdsUtil;
 import xmnh.soulfrog.utils.ObjectionUtil;
 
@@ -28,16 +30,26 @@ public class Jump implements IXposedHookLoadPackage {
                 Context.class,
                 new XC_MethodHook() {
                     public void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        // 获取context上下文
+                        Context context = XpContext.getContext((Context) param.args[0]);
                         try {
-                            // 获取context上下文
-                            Context context = XpContext.getContext((Context) param.args[0]);
                             // 获取classLoader类加载器
                             XpContext.classLoader = context.getClassLoader();
+                        } catch (XposedHelpers.ClassNotFoundError e) {
+                            XposedHelpers.findAndHookMethod(ClassLoader.class, "loadClass", String.class, new XC_MethodHook() {
+                                public void afterHookedMethod(XC_MethodHook.MethodHookParam param) {
+                                    Class<?> result = (Class<?>) param.getResult();
+                                    Log.d("SoulFrog", "loadClass => " + result);
+                                    if (result == null) {
+                                        return;
+                                    }
+                                    XpContext.classLoader = result.getClassLoader();
+                                }
+                            });
+                        } finally {
                             if (XpContext.classLoader != null) {
-                                consumer.accept(context, XpContext.classLoader);
+                                consumer.accept(XpContext.getContext(context), XpContext.classLoader);
                             }
-                        } catch (Throwable e) {
-                            XposedBridge.log(e);
                         }
                     }
                 });
@@ -47,15 +59,16 @@ public class Jump implements IXposedHookLoadPackage {
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam param) throws Throwable {
         try {
             ObjectionUtil.hideAll();
-//            KillAdsUtil.assets();
-            KillAdsUtil.killAds(XpContext.classLoader);
-//            KillAdsUtil.killAdPrecise(XpContext.classLoader);
             // 实例化工厂
             BaseHook baseHook = AppFactory.init(param.processName);
-            if (baseHook != null) {
-                // 调用hook方法
-                hookAttach(baseHook::hook);
-            }
+            // 调用hook方法
+            hookAttach((context, classLoader) -> {
+                if (baseHook != null) {
+                    baseHook.hook(context, classLoader);
+                }
+                HookUtil.tapTap(context, classLoader);
+            });
+
         } catch (Throwable e) {
             XposedBridge.log(e);
         }

@@ -25,9 +25,11 @@ import xmnh.soulfrog.app.NowMuse;
 import xmnh.soulfrog.app.QQLive;
 import xmnh.soulfrog.app.SDMaid;
 import xmnh.soulfrog.app.SaComic;
+import xmnh.soulfrog.app.TapTap;
 import xmnh.soulfrog.app.Tarot;
 import xmnh.soulfrog.app.Termius;
 import xmnh.soulfrog.app.Tick;
+import xmnh.soulfrog.app.TikTok;
 import xmnh.soulfrog.enums.AppEnum;
 import xmnh.soulfrog.interfaces.BaseHook;
 
@@ -62,6 +64,9 @@ public class AppFactory {
         HOOKS.put(AppEnum.SA_COMIC.getPackageName(), new SaComic());
         HOOKS.put(AppEnum.APK_PURE.getPackageName(), new APKPure());
         HOOKS.put(AppEnum.INFINITY_AI.getPackageName(), new InfinityAI());
+        HOOKS.put(AppEnum.TIKTOK.getPackageName(), new TikTok());
+        HOOKS.put(AppEnum.TAP_TAP.getPackageName(), new TapTap());
+
         // TODO 待填写需要hook的实例
     }
 

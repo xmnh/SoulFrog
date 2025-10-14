@@ -6,6 +6,7 @@ pluginManagement {
         maven { url 'https://jitpack.io' }
         mavenLocal()
         mavenCentral()
+        google()
     }
 }
 dependencyResolutionManagement {
@@ -17,6 +18,7 @@ dependencyResolutionManagement {
         maven { url 'https://jitpack.io' }
         mavenLocal()
         mavenCentral()
+        google()
     }
 }
 rootProject.name = "SoulFrog"

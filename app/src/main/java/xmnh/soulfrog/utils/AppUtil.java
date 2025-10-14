@@ -13,6 +13,7 @@ import xmnh.soulfrog.application.SoulFrog;
 public class AppUtil {
     private static Toast toast;
     public static SharedPreferences sp;
+
     /**
      * 获取app版本名称
      *
@@ -24,7 +25,7 @@ public class AppUtil {
                     .getPackageInfo(context.getPackageName(), Context.MODE_PRIVATE)
                     .versionName;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(SoulFrog.TAG, "getAppVersionName error" + e);
         }
         return "";
     }
@@ -40,7 +41,7 @@ public class AppUtil {
                     .getPackageInfo(context.getPackageName(), Context.MODE_PRIVATE)
                     .versionCode;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(SoulFrog.TAG, "getAppVersionCode error" + e);
         }
         return 0;
     }
@@ -60,7 +61,7 @@ public class AppUtil {
     }
 
     public static void finish(Context context) {
-        String text = SoulFrog.TAG + " : ~ start running ~";
+        String text = context.getPackageName() + " : ~ start running ~";
         if (toast == null) {
             toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
         } else {
@@ -72,7 +73,6 @@ public class AppUtil {
     /**
      * 检查sp
      *
-//     * @param sp       SharedPreferences
      * @param deviceId 设备id
      * @param time     加减时间
      * @return true/false
@@ -96,7 +96,7 @@ public class AppUtil {
         try {
             Runtime.getRuntime().exec("pm clear " + packageName);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(SoulFrog.TAG, "resetApp error" + e);
         }
 
     }

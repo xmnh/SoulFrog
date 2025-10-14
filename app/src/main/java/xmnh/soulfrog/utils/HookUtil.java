@@ -1,5 +1,6 @@
 package xmnh.soulfrog.utils;
 
+import android.content.Context;
 import android.util.Log;
 
 import org.json.JSONObject;
@@ -235,10 +236,36 @@ public class HookUtil {
         return sb.toString();
     }
 
-    public static void tapTap(ClassLoader classLoader) {
-        Class<?> antiAddictionUIKit = XposedHelpers.findClass("com.tapsdk.antiaddictionui.AntiAddictionUIKit", classLoader);
-        if (antiAddictionUIKit != null) {
-            XposedBridge.hookAllMethods(antiAddictionUIKit, "init",XC_MethodReplacement.returnConstant(null));
+    public static void tapTap(Context context, ClassLoader classLoader) {
+        Class<?> profile = XposedHelpers.findClassIfExists("com.taptap.sdk.Profile", classLoader);
+        if (profile == null) {
+            return;
         }
+        context.getSharedPreferences("tap_license", 0)
+                .edit()
+                .putLong("last_license_date", 1754611688000L)
+                .putLong("last_license_date_second", 1754611688000L)
+                .apply();
+        Class<?> tapPurchase = XposedHelpers.findClass("com.taptap.pay.sdk.library.TapPurchase", classLoader);
+        if (tapPurchase != null) {
+            XposedBridge.hookAllConstructors(tapPurchase, new XC_MethodHook() {
+                public void afterHookedMethod(XC_MethodHook.MethodHookParam param) {
+                    Log.d("SoulFrog", "tapPurchase hookAllConstructors => " + param.thisObject);
+                    XposedHelpers.setBooleanField(param.thisObject, "isBought", true);
+                }
+            });
+        }
+        Class<?> userInfo = XposedHelpers.findClass("com.tapsdk.antiaddiction.entities.UserInfo", classLoader);
+        if (userInfo != null) {
+            XposedHelpers.findAndHookMethod(userInfo, "isAdult", XC_MethodReplacement.returnConstant(true));
+            XposedBridge.hookAllConstructors(userInfo, new XC_MethodHook() {
+                public void afterHookedMethod(XC_MethodHook.MethodHookParam param) {
+                    XposedHelpers.setIntField(param.thisObject, "ageLimit", 18);
+                    XposedHelpers.setIntField(param.thisObject, "remainTime", 9999);
+                }
+            });
+        }
+        AppUtil.finish(context);
     }
+
 }
