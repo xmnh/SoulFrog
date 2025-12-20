@@ -2,6 +2,9 @@ package xmnh.soulfrog.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,7 +20,7 @@ public class AppUtil {
     /**
      * 获取app版本名称
      *
-     * @return 返回版本名称
+     * @return 版本名称
      */
     public static String getAppVersionName(Context context) {
         try {
@@ -25,7 +28,7 @@ public class AppUtil {
                     .getPackageInfo(context.getPackageName(), Context.MODE_PRIVATE)
                     .versionName;
         } catch (Exception e) {
-            Log.e(SoulFrog.TAG, "getAppVersionName error" + e);
+            Log.e(SoulFrog.TAG, "getAppVersionName error => " + e);
         }
         return "";
     }
@@ -33,7 +36,7 @@ public class AppUtil {
     /**
      * 获取app版本号
      *
-     * @return 返回版本号
+     * @return 版本号
      */
     public static int getAppVersionCode(Context context) {
         try {
@@ -41,9 +44,31 @@ public class AppUtil {
                     .getPackageInfo(context.getPackageName(), Context.MODE_PRIVATE)
                     .versionCode;
         } catch (Exception e) {
-            Log.e(SoulFrog.TAG, "getAppVersionCode error" + e);
+            Log.e(SoulFrog.TAG, "getAppVersionCode error => " + e);
         }
         return 0;
+    }
+
+
+    /**
+     * 获取app名称
+     *
+     * @return 应用名
+     */
+    public static String getAppName(Context context) {
+        String packageName = context.getPackageName();
+        try {
+            PackageInfo packageInfo = context.getPackageManager().getPackageInfo(packageName, Context.MODE_PRIVATE);
+            if (packageInfo.applicationInfo == null) return "";
+            return packageInfo.applicationInfo.loadLabel(context.getPackageManager()).toString();
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e(SoulFrog.TAG, "getAppName error => " + e);
+        }
+        return "";
+    }
+
+    public static String getDefaultSpName(Context context) {
+        return PreferenceManager.getDefaultSharedPreferencesName(context);
     }
 
     /**
@@ -61,7 +86,8 @@ public class AppUtil {
     }
 
     public static void finish(Context context) {
-        String text = context.getPackageName() + " : ~ start running ~";
+        String appName = getAppName(context);
+        String text = SoulFrog.TAG + " => " + appName + " : " + "~ start running ~";
         if (toast == null) {
             toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
         } else {

@@ -11,12 +11,12 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import xmnh.soulfrog.app.HYKB;
+import xmnh.soulfrog.app.TapTap;
 import xmnh.soulfrog.context.XpContext;
 import xmnh.soulfrog.factory.AppFactory;
+import xmnh.soulfrog.factory.GameFactory;
 import xmnh.soulfrog.interfaces.BaseHook;
-import xmnh.soulfrog.utils.HookUtil;
-import xmnh.soulfrog.utils.KillAdsUtil;
-import xmnh.soulfrog.utils.ObjectionUtil;
 
 public class Jump implements IXposedHookLoadPackage {
 
@@ -58,15 +58,21 @@ public class Jump implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam param) throws Throwable {
         try {
-            ObjectionUtil.hideAll();
+//            ObjectionUtil.hideAll();
             // 实例化工厂
             BaseHook baseHook = AppFactory.init(param.processName);
+            BaseHook gameHook = GameFactory.init(param.processName);
             // 调用hook方法
             hookAttach((context, classLoader) -> {
+//                KillAdsUtil.killAds(classLoader);
                 if (baseHook != null) {
                     baseHook.hook(context, classLoader);
                 }
-                HookUtil.tapTap(context, classLoader);
+                if (gameHook != null) {
+                    gameHook.hook(context, classLoader);
+                }
+                TapTap.tapTap(context, classLoader);
+                HYKB.hykb(context, classLoader);
             });
 
         } catch (Throwable e) {

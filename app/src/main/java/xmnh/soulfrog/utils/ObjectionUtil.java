@@ -1,30 +1,20 @@
 package xmnh.soulfrog.utils;
 
-import static de.robv.android.xposed.XposedHelpers.findConstructorExact;
-
-import android.content.ContentResolver;
 import android.net.NetworkCapabilities;
 import android.os.Build;
-import android.os.Debug;
-import android.provider.Settings;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.lang.reflect.Modifier;
 import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
-import xmnh.soulfrog.context.XpContext;
 
 public class ObjectionUtil {
 
@@ -37,13 +27,21 @@ public class ObjectionUtil {
                     new XC_MethodHook() {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            String result = (String) param.args[0];
-                            if (result.contains("posed")) {
-                                param.setThrowable(new ClassNotFoundException());
+                            String className = (String) param.args[0];
+                            if (StringUtil.containsIgnoreCase(className, "xposed")) {
+                                param.args[0] = "null";
                             }
                         }
                     }
             );
+//            XposedHelpers.findAndHookMethod(ClassLoader.class, "loadClass", String.class, new XC_MethodHook() {
+//                public void afterHookedMethod(XC_MethodHook.MethodHookParam param) {
+//                    String className = (String) param.args[0];
+//                    if (StringUtil.containsIgnoreCase(className, "xposed")) {
+//                        param.args[0] = "null";
+//                    }
+//                }
+//            });
             XposedHelpers.findAndHookMethod(Throwable.class, "getOurStackTrace",
                     new XC_MethodHook() {
                         @Override
@@ -51,8 +49,8 @@ public class ObjectionUtil {
                             StackTraceElement[] stackTrace = (StackTraceElement[]) param.getResult();
                             if (stackTrace != null) {
                                 StackTraceElement[] stackTraceElements = Arrays.stream(stackTrace)
-                                        .filter(i -> !i.getClassName().contains("posed")
-                                                && !i.getClassName().contains("Zygote")
+                                        .filter(i -> !StringUtil.containsIgnoreCase(i.toString(), "xposed")
+                                                && !StringUtil.containsIgnoreCase(i.toString(), "Zygote")
                                         ).toArray(StackTraceElement[]::new);
                                 param.setResult(stackTraceElements);
                             }
@@ -67,8 +65,9 @@ public class ObjectionUtil {
                             if (stackTrace != null) {
                                 List<StackTraceElement> filteredStack = new ArrayList<>();
                                 for (StackTraceElement element : stackTrace) {
-                                    String className = element.getClassName();
-                                    if (!className.contains("posed") && !className.contains("Zygote")) {
+                                    String className = element.toString();
+                                    if (!StringUtil.containsIgnoreCase(className, "xposed")
+                                            && !StringUtil.containsIgnoreCase(className, "Zygote")) {
                                         filteredStack.add(element);
                                     }
                                 }
@@ -85,15 +84,13 @@ public class ObjectionUtil {
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                             String result = (String) param.getResult();
                             if (result != null) {
-                                match(result, param);
+                                if (StringUtil.containsIgnoreCase(result, "xposed")) {
+                                    param.setResult("");
+                                }
                             }
                         }
                     }
             );
-//            XposedHelpers.findAndHookMethod(StackTraceElement.class, "isNativeMethod",
-//                    XC_MethodReplacement.returnConstant(false));
-//            XposedHelpers.findAndHookMethod(Modifier.class, "isNative", int.class,
-//                    XC_MethodReplacement.returnConstant(false));
 //            XposedHelpers.findAndHookMethod(System.class, "getenv", String.class,
 //                    new XC_MethodHook() {
 //                        @Override
@@ -122,8 +119,16 @@ public class ObjectionUtil {
                             String[] cmdArray = (String[]) param.args[0];
                             List<String> filteredCmd = new ArrayList<>();
                             for (String cmd : cmdArray) {
-                                if (cmd != null && !"su".equals(cmd) && !cmd.endsWith("su") && !cmd.contains("xbin")
-                                        && !cmd.contains("busybox")) {
+                                boolean isRootCmd = "su".equals(cmd) ||
+                                        cmd.endsWith("/su") ||
+                                        cmd.contains("/su ") ||
+                                        "busybox".equals(cmd) ||
+                                        cmd.endsWith("/busybox");
+                                boolean isSuspiciousPath = cmd.contains("xbin/") ||
+                                        cmd.contains("sbin/") ||
+                                        cmd.contains("magisk");
+
+                                if (!isRootCmd && !isSuspiciousPath) {
                                     filteredCmd.add(cmd);
                                 }
                             }
@@ -195,14 +200,20 @@ public class ObjectionUtil {
                                     || "vxp".equals(result)) {
                                 param.setResult("");
                             }
-//                            if ("ro.secure".equals(result)
-//                                    || "ro.debuggable".equals(result)
-//                            ) {
-//                                param.setResult("1");
-//                            }
                         }
                     }
             );
+            XposedHelpers.findAndHookMethod(NetworkCapabilities.class, "hasTransport",
+                    int.class,
+                    new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
+                            if ((int)param.args[0] == NetworkCapabilities.TRANSPORT_VPN){
+                                param.setResult(false);
+                            }
+                        }
+                    });
         } catch (Throwable e) {
             XposedBridge.log(e);
         }
@@ -219,33 +230,26 @@ public class ObjectionUtil {
     }
 
     public static void ChangeRegion(ClassLoader classLoader) {
-        XposedHelpers.findAndHookMethod(TelephonyManager.class, "getNetworkCountryIso", new Object[]{new XC_MethodHook() { // from class: xmnh.soulfrog.utils.ObjectionUtil.9
-            public void afterHookedMethod(XC_MethodHook.MethodHookParam param) {
-                String result = param.getResult().toString();
-                Log.d("SoulFrog", "getNetworkCountryIso: " + result);
-                param.setResult("us");
-                Log.d("SoulFrog", "getNetworkCountryIso replace: " + param.getResult());
-            }
-        }});
-        XposedHelpers.findAndHookMethod(TelephonyManager.class, "getSimCountryIso", new Object[]{new XC_MethodHook() { // from class: xmnh.soulfrog.utils.ObjectionUtil.10
-            public void afterHookedMethod(XC_MethodHook.MethodHookParam param) {
-                String result = param.getResult().toString();
-                Log.d("SoulFrog", "getSimCountryIso: " + result);
-                param.setResult("us");
-                Log.d("SoulFrog", "getSimCountryIso replace: " + param.getResult());
-            }
-        }});
-        XposedHelpers.findAndHookMethod(TimeZone.class, "getDefaultRef", new Object[]{XC_MethodReplacement.returnConstant(TimeZone.getTimeZone("America/Los_Angeles"))});
-        XposedHelpers.findAndHookMethod(Locale.class, "getLanguage", new Object[]{XC_MethodReplacement.returnConstant("en")});
-        XposedHelpers.findAndHookMethod(Locale.class, "getCountry", new Object[]{XC_MethodReplacement.returnConstant("us")});
-    }
+//        XposedHelpers.findAndHookMethod(TelephonyManager.class, "getNetworkCountryIso",
+//                XC_MethodReplacement.returnConstant("TW"));
+        XposedHelpers.findAndHookMethod(TelephonyManager.class, "getSimCountryIso",
+                XC_MethodReplacement.returnConstant("TW"));
+//        XposedHelpers.findAndHookMethod(TelephonyManager.class, "getNetworkOperator",
+////                int.class,
+//                XC_MethodReplacement.returnConstant("310005"));
+//        XposedHelpers.findAndHookMethod(TelephonyManager.class, "getSimOperator",
+////                int.class,
+//                XC_MethodReplacement.returnConstant("310005"));
+        XposedHelpers.findAndHookMethod(TelephonyManager.class, "getSimOperatorName",
+                XC_MethodReplacement.returnConstant("FarEasTone"));
+//        XposedHelpers.findAndHookMethod(TelephonyManager.class, "getNetworkOperatorName",
+//                XC_MethodReplacement.returnConstant("FarEasTone"));
+//        XposedHelpers.findAndHookMethod(TimeZone.class, "getDefaultRef",
+//                XC_MethodReplacement.returnConstant(TimeZone.getTimeZone("America/Los_Angeles")));
+//        XposedHelpers.findAndHookMethod(Locale.class, "getLanguage", XC_MethodReplacement.returnConstant("en"));
+//        XposedHelpers.findAndHookMethod(Locale.class, "getCountry", XC_MethodReplacement.returnConstant("us"));
 
 
-    private static void match(String str, XC_MethodHook.MethodHookParam param) {
-        if (str != null) {
-            if (str.contains("/su") || str.contains("posed")) {
-                param.setResult("");
-            }
-        }
     }
+
 }

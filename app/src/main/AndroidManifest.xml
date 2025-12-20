@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="xmnh.soulfrog">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="xmnh.soulfrog">
+
     <application android:label="@string/app_name">
         <!--模块标识-->
         <meta-data
@@ -8,7 +10,7 @@
         <!--模块描述-->
         <meta-data
             android:name="xposeddescription"
-            android:value="by:xmnh" />
+            android:value="开源免费 hook vip 通杀taptap买断制游戏(本体+DLC) by:xmnh" />
         <!--模块最小支持xposed版本-->
         <meta-data
             android:name="xposedminversion"

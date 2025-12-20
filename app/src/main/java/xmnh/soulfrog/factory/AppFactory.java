@@ -10,9 +10,9 @@ import xmnh.soulfrog.app.AiQiYi;
 import xmnh.soulfrog.app.AudioClips;
 import xmnh.soulfrog.app.BearVCR;
 import xmnh.soulfrog.app.BrainWave;
-import xmnh.soulfrog.app.RRVideo;
 import xmnh.soulfrog.app.DailyTask;
 import xmnh.soulfrog.app.DevCheck;
+import xmnh.soulfrog.app.DouYin;
 import xmnh.soulfrog.app.ESBrowse;
 import xmnh.soulfrog.app.FakeLocation;
 import xmnh.soulfrog.app.FastLinkVPN;
@@ -23,6 +23,8 @@ import xmnh.soulfrog.app.KuWo;
 import xmnh.soulfrog.app.Launcher3;
 import xmnh.soulfrog.app.NowMuse;
 import xmnh.soulfrog.app.QQLive;
+import xmnh.soulfrog.app.RRVideo;
+import xmnh.soulfrog.app.Reader;
 import xmnh.soulfrog.app.SDMaid;
 import xmnh.soulfrog.app.SaComic;
 import xmnh.soulfrog.app.TapTap;
@@ -30,6 +32,7 @@ import xmnh.soulfrog.app.Tarot;
 import xmnh.soulfrog.app.Termius;
 import xmnh.soulfrog.app.Tick;
 import xmnh.soulfrog.app.TikTok;
+import xmnh.soulfrog.app.TomatoBook;
 import xmnh.soulfrog.enums.AppEnum;
 import xmnh.soulfrog.interfaces.BaseHook;
 
@@ -66,7 +69,9 @@ public class AppFactory {
         HOOKS.put(AppEnum.INFINITY_AI.getPackageName(), new InfinityAI());
         HOOKS.put(AppEnum.TIKTOK.getPackageName(), new TikTok());
         HOOKS.put(AppEnum.TAP_TAP.getPackageName(), new TapTap());
-
+        HOOKS.put(AppEnum.READER.getPackageName(), new Reader());
+        HOOKS.put(AppEnum.TOMATO_BOOK.getPackageName(), new TomatoBook());
+        HOOKS.put(AppEnum.DOU_YIN.getPackageName(), new DouYin());
         // TODO 待填写需要hook的实例
     }
 

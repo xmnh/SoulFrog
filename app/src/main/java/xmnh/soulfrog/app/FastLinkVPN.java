@@ -2,23 +2,17 @@ package xmnh.soulfrog.app;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XC_MethodReplacement;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import xmnh.soulfrog.application.SoulFrog;
 import xmnh.soulfrog.enums.AppEnum;
 import xmnh.soulfrog.interfaces.BaseHook;
 import xmnh.soulfrog.utils.AppUtil;
-import xmnh.soulfrog.utils.HookUtil;
 import xmnh.soulfrog.utils.StringUtil;
 
 public class FastLinkVPN implements BaseHook {
@@ -30,27 +24,7 @@ public class FastLinkVPN implements BaseHook {
             AppUtil.sp.edit().putString("inviter", "201271814").apply();
         }
         getDeviceId();
-        // DeviceInfoUtils.kt
-/*        switch (appVersionName) {
-            case "2.18.6":
-                getDeviceId(classLoader, "u3.a.a.a.a1.b2", "d");
-                return;
-            case "2.18.10":
-            case "2.18.12":
-                getDeviceId(classLoader, "cs.m", "f");
-                return;
-            case "2.18.16":
-                getDeviceId(classLoader, "ds.m", "f");
-                return;
-            case "2.18.18":
-                getDeviceId(classLoader, "fs.l", "d");
-                return;
-            case "2.18.20":
-                getDeviceId(classLoader, "gs.l", "d");
-                return;
-            default:
-                getDeviceId();
-        }*/
+
         AppUtil.finish(context);
     }
 

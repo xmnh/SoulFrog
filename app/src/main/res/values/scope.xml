@@ -3,8 +3,8 @@
     <!--name里的值与AndroidManifest.xml的(xposedscope)模块作用范围相对应-->
     <array name="xposed_scope">
         <!--待填写需要hook的包名,每个包名对应一个item标签-->
-        <item>cn.kuwo.player</item>
-        <item>com.tencent.qqlive</item>
+<!--        <item>cn.kuwo.player</item>-->
+<!--        <item>com.tencent.qqlive</item>-->
 <!--        <item>com.moyan.dailytask</item>-->
         <item>com.lerist.fakelocation</item>
         <item>com.shineyie.aijianji</item>
@@ -25,6 +25,33 @@
         <item>com.zfast.xyz</item>
         <item>world.letsgo.booster.android.pro</item>
         <item>com.server.auditor.ssh.client</item>
+        <item>com.guigugame.guigubahuang</item>
+        <item>com.originatorkids.EndlessReader</item>
+        <item>com.xd.dxlzz.taptap</item>
+        <item>com.khg.actionsquad.gamet</item>
+        <item>com.dragon.read</item>
+        <item>com.ZeroCreation.Starveling</item>
+        <item>com.FYQD.BMI</item>
+        <item>com.aurogon.Afterimage</item>
+        <item>com.lingchuang.zanghua</item>
+        <item>com.YiMoXuan.XYZJF</item>
+        <item>com.east2west.theescapists2.TapTap</item>
+        <item>com.lynkpin.artifactseeker</item>
+        <item>com.kunyu.newgreedland</item>
+        <item>com.GordianQuest.MixedRealms.mtap</item>
+        <item>com.xmqxt.archvale.mtap</item>
+        <item>com.BackpackHero.mtap</item>
+        <item>com.ShinyShoe.MonsterTrain.mtap</item>
+        <item>com.xd.volcano.tap</item>
+        <item>com.XiaMenLeiYun.OfficeLife.mtap</item>
+        <item>com.gameragame.Rewinder</item>
+        <item>com.GameSmith.ReMix</item>
+        <item>com.moiraigames.monstersanctuary.mtap</item>
+        <item>com.street.mtap</item>
+        <item>com.chillyroom.worldofkungfu.yw</item>
+        <item>net.spacecan.juicyrealm.android.TapTap</item>
+        <item>com.xd.tothemoon.taptap</item>
+        <item>com.alawar.wallworld.gamet</item>
         <!--        <item>com.easysay.japanese</item>-->
     </array>
 </resources>

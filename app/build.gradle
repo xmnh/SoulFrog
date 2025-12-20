@@ -19,26 +19,27 @@ stringfog {
 
 android {
     namespace 'xmnh.soulfrog'
-    compileSdk 36
-
+//    compileSdk 36
+    compileSdkVersion 36
     buildFeatures {
         buildConfig = true
     }
-
+    applicationVariants.all {
+        outputs.all {
+                outputFileName = "SoulFrog_${name}_${versionName}.apk"
+            }
+    }
     defaultConfig {
         applicationId "xmnh.soulfrog"
         minSdk 25
         targetSdk 36
-        versionCode 1
-        versionName "1.0"
+        versionCode 15
+        versionName "1.5"
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-//            zipAlignEnabled true //优化我们的java字节码，提高运行效率
-//            shrinkResources true //资源的压缩
-//            useProguard true //代码压缩
-            minifyEnabled true //开启混淆
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
@@ -57,6 +58,7 @@ dependencies {
     compileOnly 'de.robv.android.xposed:api:82'
 
     implementation 'com.github.megatronking.stringfog:xor:5.0.0'
+//    implementation 'com.google.code.gson:gson:2.11.0'
 
 //    implementation 'androidx.appcompat:appcompat:1.4.1'
 //    implementation 'com.google.android.material:material:1.5.0'

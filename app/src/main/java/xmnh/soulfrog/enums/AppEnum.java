@@ -33,7 +33,9 @@ public enum AppEnum {
 
     GUI_GU("鬼谷八荒", "com.guigugame.guigubahuang"),
     TAP_TAP("TapTap", "com.taptap"),
-
+    READER("Reader", "com.originatorkids.EndlessReader"),
+    TOMATO_BOOK("番茄免费小说","com.dragon.read"),
+    DOU_YIN("抖音", "com.ss.android.ugc.aweme"),
     // TODO 待填写需要hook的枚举
     ;
 
